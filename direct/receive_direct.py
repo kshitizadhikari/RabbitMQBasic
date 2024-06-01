@@ -7,12 +7,10 @@ channel.exchange_declare(exchange='direct_logs', exchange_type='direct')
 result = channel.queue_declare(queue='', durable=True, exclusive=True)
 queue_name = result.method.queue
 
-severity = sys.argv[1] if len(sys.argv[1]) > 1 else 'info'
+severities = sys.argv[1:] if len(sys.argv) > 1 else ['info']
 
-if severity == 'info':
+for severity in severities:
     channel.queue_bind(queue=queue_name, exchange='direct_logs', routing_key=severity)
-
-channel.queue_bind(queue=queue_name, exchange='direct_logs', routing_key=severity)
 
 def callback(ch, method, properties, body):
     print(f"[x] {severity}: {body}")
